@@ -1,0 +1,48 @@
+These are sets of header files extracted from main components of
+AOSP (Android Open Source Project), for each main release of AOSP.
+
+Android NDK provided by Google contains subset of AOSP platform
+headers which are deemed "external interface" by Google. However,
+writing advanced software for Android necessitates access to complete
+platform. Many aspects of it change, sometimes drastically, between
+releases, so compiling user source code against platform headers for
+different releases is required. This project intends to streamline
+this process, allowing to access headers for all important Android
+releases at once.
+
+To prepare these headers, all *.h and *.hpp files were extracted
+from following AOSP projects:
+
+ * system/core
+ * frameworks/base
+ * frameworks/native
+
+
+FAQ
+---
+Q: Google doesn't recommend usage of non-NDK headers.
+A: Who cares.
+
+Q: As these headers don't represent external interface, they can be
+changes by vendor of some device.
+A: True, so we can figure out what particular vendors work on -
+on bringing up innovative products, cutting time to market, increasing
+power efficiency, or fragmenting platform and breaking compatibility.
+
+Q: How do I know that headers provided are correct?
+A: You are encouraged to verify. Each header project directory contains
+.git-org/refs/heads/master with revision of tag from which it was extracted.
+Actually, extraction was automatic and script is provided. To easily verify
+a particular tag:
+
+    rm -rf android-1.6_r1
+    scripts/fetch-headers android-1.6_r1
+    git diff
+
+
+TODO
+----
+1. Add platform "import" libraries to link with (devoid of code, only with
+exported symbols).
+
+2. Similar "implib" jars to link Java code against.
