@@ -19,7 +19,7 @@ TAG=$1
 TOP=$PWD
 
 for p in $PROJECTS; do
-    echo $p
+    echo "=== $p ==="
     mkdir -p $TAG/$p
     cd $TAG/$p
     git init
@@ -39,6 +39,11 @@ for p in $PROJECTS; do
     find -type d -empty | xargs --no-run-if-empty -n100 rm -r
     find -type d -empty | xargs --no-run-if-empty -n100 rm -r
     find -type d -empty | xargs --no-run-if-empty -n100 rm -r
+
+    # Rename git to .git-org and leave only minimal identification files
+    cd .git; find . -mindepth 1 | grep -v -E 'FETCH_HEAD|./refs' | xargs rm -rf
+    cd ..
+    mv .git .git-org
 
     cd $TOP
 done
