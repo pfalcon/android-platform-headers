@@ -7,6 +7,7 @@ BASE="https://android.googlesource.com/platform"
 PROJECTS="
     system/core
     frameworks/base
+    frameworks/native
 "
 
 if [ $# -ne 1 ]; then
@@ -20,12 +21,20 @@ TAG=$1
 TOP=$PWD
 
 for p in $PROJECTS; do
+    cd $TOP
     echo "=== $p ==="
     mkdir -p $TAG/$p
     cd $TAG/$p
     git init
-    git remote add origin $BASE/$p
-    git fetch --depth=1 origin $TAG
+    git remote add origin $BASE/$p || true
+    if ! git fetch --depth=1 origin $TAG; then
+        echo "*****************************************"
+        echo "Could not fetch tag $TAG of $p - skipping"
+        echo "*****************************************"
+        cd $TOP
+        rm -rf $TAG/$p
+        continue
+    fi
     git reset --hard FETCH_HEAD
 
     # Delete everything but header files, and leave .git dir intact
@@ -45,6 +54,4 @@ for p in $PROJECTS; do
     cd .git; find . -mindepth 1 | grep -v -E 'FETCH_HEAD|./refs' | xargs rm -rf
     cd ..
     mv .git .git-org
-
-    cd $TOP
 done
