@@ -5,8 +5,8 @@ BASE="https://android.googlesource.com/platform/"
 
 PROJECTS="
     system/core
+    frameworks/base
 "
-#    frameworks/base
 
 if [ $# -ne 1 ]; then
     echo "Usage: $0 <android_tag>"
