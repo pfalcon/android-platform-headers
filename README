@@ -10,6 +10,11 @@ different releases is required. This project intends to streamline
 this process, allowing to access headers for all important Android
 releases at once.
 
+In this respect, it is similar to "linux-kernel-headers" found in
+many Linux distributions - it allows to compile software without
+the need to have hundreds of megabytes (or gigabytes) of complete
+kernel (or platform) source code around.
+
 To prepare these headers, all *.h and *.hpp files were extracted
 from following AOSP projects:
 
