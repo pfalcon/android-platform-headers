@@ -1,0 +1,44 @@
+#!/bin/sh
+
+BASE="https://android.googlesource.com/platform/"
+#BASE="/home/pfalcon/projects-3rdparty/android-mirror/platform"
+
+PROJECTS="
+    system/core
+"
+#    frameworks/base
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <android_tag>"
+    exit 1
+fi
+
+#TAG="android-2.3.5_r1"
+TAG=$1
+
+TOP=$PWD
+
+for p in $PROJECTS; do
+    echo $p
+    mkdir -p $TAG/$p
+    cd $TAG/$p
+    git init
+    git remote add origin $BASE/$p
+    git fetch --depth=1 origin $TAG
+    git reset --hard FETCH_HEAD
+
+    # Delete everything but header files, and leave .git dir intact
+    find -regextype posix-egrep -type f -not -regex '.+\.(h|hpp)$' | grep -v -E ".git/" | xargs -n100 rm
+
+    # Run this severeal times, to reduce empty dir hierarchies on each iteration
+    find -type d -empty | xargs --no-run-if-empty -n100 rm -r
+    find -type d -empty | xargs --no-run-if-empty -n100 rm -r
+    find -type d -empty | xargs --no-run-if-empty -n100 rm -r
+    find -type d -empty | xargs --no-run-if-empty -n100 rm -r
+    find -type d -empty | xargs --no-run-if-empty -n100 rm -r
+    find -type d -empty | xargs --no-run-if-empty -n100 rm -r
+    find -type d -empty | xargs --no-run-if-empty -n100 rm -r
+    find -type d -empty | xargs --no-run-if-empty -n100 rm -r
+
+    cd $TOP
+done
