@@ -1,6 +1,7 @@
 #!/bin/sh
+set -e
 
-BASE="https://android.googlesource.com/platform/"
+BASE="https://android.googlesource.com/platform"
 #BASE="/home/pfalcon/projects-3rdparty/android-mirror/platform"
 
 PROJECTS="
