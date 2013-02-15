@@ -8,6 +8,8 @@ PROJECTS="
     system/core
     frameworks/base
     frameworks/native
+    hardware/libhardware
+    hardware/libhardware_legacy
 "
 
 if [ $# -ne 1 ]; then
