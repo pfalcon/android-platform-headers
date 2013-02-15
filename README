@@ -29,9 +29,9 @@ Q: Google doesn't recommend usage of non-NDK headers.
 A: Who cares.
 
 Q: As these headers don't represent external interface, they can be
-changes by vendor of some device.
+changed by a vendor of some device.
 A: True, so we can figure out what particular vendors work on -
-on bringing up innovative products, cutting time to market, increasing
+bringing up innovative products, cutting time to market, increasing
 power efficiency, or fragmenting platform and breaking compatibility.
 
 Q: How do I know that headers provided are correct?
