@@ -1,0 +1,39 @@
+#!/bin/sh
+set -xe
+
+BASE="https://android.googlesource.com"
+# Uncomment to manually mirror specific projects
+#PROJECTS="
+#platform/dalvik
+#"
+
+if [ -z "$PROJECTS" ]; then
+    if [ ! -f aosp-projects.txt ]; then
+        wget "https://android.googlesource.com/?format=TEXT" -O aosp-projects.txt
+    fi
+
+    PROJECTS=$(grep -E "^(platform|device)" aosp-projects.txt)
+fi
+
+GIT_CLONE_OPTS=--mirror
+
+TOP=$PWD
+for p in $PROJECTS; do
+    cd $TOP
+    echo $p
+    if [ -d $p.git ]; then
+        continue
+    fi
+    parent=$(dirname $p)
+    mkdir -p $parent
+    cd $parent
+    git clone $GIT_CLONE_OPTS $BASE/$p
+    cd $TOP; cd $p.git
+    git remote rename origin aosp
+    git config remote.aosp.projectname $p
+    git config remote.aosp.review https://android-review.googlesource.com/
+    git config --unset remote.aosp.mirror
+    # Default clone --mirror pattern is slighly more all-encompassing,
+    # set to the same value as repo does.
+    git config remote.aosp.fetch "+refs/heads/*:refs/heads/*"
+done
