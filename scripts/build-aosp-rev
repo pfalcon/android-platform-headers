@@ -1,0 +1,20 @@
+#/bin/sh
+
+if [ "$1" == "" ]; then
+    echo "Usage: $0 <tag>"
+    exit 1
+fi
+
+TAG=$1
+set -xe
+
+if [ ! -d "$TAG" ]; then
+    ./fetch-aosp-rev $TAG
+fi
+
+cd $TAG
+
+rm -rf out
+. build/envsetup.sh
+lunch generic-eng
+make am showcommands HOST_CC=gcc-4.4 HOST_CXX=g++-4.4 HOST_CPP=cpp-4.4
