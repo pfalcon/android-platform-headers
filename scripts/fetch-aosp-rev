@@ -1,0 +1,16 @@
+#!/bin/sh
+set -xe
+
+AOSP_MIRROR_DIR=android-mirror
+TAG=$1
+
+if [ ! -d git-repo.git ]; then
+    git clone --mirror https://gerrit.googlesource.com/git-repo
+fi
+
+mkdir -p $TAG
+cd $TAG
+repo init -u $AOSP_MIRROR_DIR/platform/manifest.git -b $TAG \
+    --reference $AOSP_MIRROR_DIR \
+    --repo-url=$PWD/../git-repo.git --no-repo-verify
+repo sync
