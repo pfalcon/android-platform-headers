@@ -10,6 +10,13 @@ set -xe
 
 if [ ! -d "$TAG" ]; then
     ./fetch-aosp-rev $TAG
+    if [ -d patches/$TAG ]; then
+        cd $TAG
+        for patch in ../patches/$TAG/*; do
+            patch -p1 -N -i $patch
+        done
+        cd ..
+    fi
 fi
 
 cd $TAG
