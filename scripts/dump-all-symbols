@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ "$1" == "" ]; then
+    echo "Usage: $0 <tag>"
+    exit 1
+fi
+
+TAG=$1
+
+LIBPATH=$TAG/out/target/product/generic/system/lib
+for lib in $(cd $LIBPATH; find . -name "*.so"); do
+    echo $lib
+    mkdir -p ../$TAG/lib/symbols/$(dirname $lib)
+    # DF means Dynamic Function
+    objdump --dynamic-syms $LIBPATH/$lib | awk '$3 == "DF" {print $6}' | sort > \
+        ../$TAG/lib/symbols/$(dirname $lib)/$(basename $lib .so).sym
+done
