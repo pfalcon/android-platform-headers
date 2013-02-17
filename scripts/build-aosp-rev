@@ -24,4 +24,5 @@ cd $TAG
 rm -rf out
 . build/envsetup.sh
 lunch generic-eng
+# Older versions of Android required old gcc
 make am showcommands HOST_CC=gcc-4.4 HOST_CXX=g++-4.4 HOST_CPP=cpp-4.4
