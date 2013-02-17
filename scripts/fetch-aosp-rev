@@ -10,7 +10,7 @@ fi
 
 mkdir -p $TAG
 cd $TAG
-repo init -u $AOSP_MIRROR_DIR/platform/manifest.git -b $TAG \
-    --reference $AOSP_MIRROR_DIR \
+repo init -u $PWD/../$AOSP_MIRROR_DIR/platform/manifest.git -b $TAG \
+    --reference $PWD/../$AOSP_MIRROR_DIR \
     --repo-url=$PWD/../git-repo.git --no-repo-verify
 repo sync
