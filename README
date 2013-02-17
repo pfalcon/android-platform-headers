@@ -23,6 +23,10 @@ from following AOSP projects:
  * frameworks/native
 
 
+NOTE: Project git repository may undergo rebases. Please rely on
+tags when using in your projects. Use git pull --rebase for updating
+your workcopy.
+
 FAQ
 ---
 Q: Google doesn't recommend usage of non-NDK headers.
