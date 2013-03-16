@@ -8,7 +8,8 @@
 # If you already have mirror produced by repo, you can create symlink
 # "android-mirror" pointing to it, then this script will download only
 # projects missing in it (again, your mirror will be still usable for
-# repo init --reference).
+# repo init --reference). To keep mirror up-to-date you, as expected,
+# can use "repo sync" command.
 #
 set -xe
 
