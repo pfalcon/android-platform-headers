@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+GCC=arm-linux-gnueabi-gcc
+
+if [ "$1" == "" ]; then
+    echo "Usage: $0 <tag>"
+    exit 1
+fi
+
+TAG=$1
+BASE=../$TAG/lib
+cd $BASE/symbols
+for f in $(find . -name "*.sym"); do
+    echo $f
+    dir=$(dirname $f)
+    awk ' { print "void " $0 "(){}"}' $f >$f.c
+    mkdir -p ../$dir
+    $GCC -w --shared -nostdlib -fomit-frame-pointer -s $f.c -o ../$dir/$(basename $f .sym).so
+    rm $f.c
+done
