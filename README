@@ -30,7 +30,12 @@ your workcopy.
 FAQ
 ---
 Q: Google doesn't recommend usage of non-NDK headers.
-A: Who cares.
+A: Short answer: who cares. Long answer: Android is a multi-layer system,
+and there're different rules for different levels. If you want maximum
+portability, you should not use native code at all, and yet many applications
+use it to improve performance, etc. Similar logic applies to usage of
+not officially exported interfaces - sometimes they just need to be used
+to get most of the underlying system.
 
 Q: As these headers don't represent external interface, they can be
 changed by a vendor of some device.
