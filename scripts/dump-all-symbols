@@ -14,6 +14,6 @@ for lib in $(cd $LIBPATH; find . -name "*.so"); do
     # Strip symbol value/address - assume that it's unstable across compilers,
     # so will lead to spurious diffs when reproducing. There's also "size" field
     # left, but assume that's more stable and leave it in.
-    objdump --dynamic-syms $LIBPATH/$lib | grep "^0" | cut -c10- | LC_COLLATE=C sort -t$'\t' -k2.10 > \
+    nm -D $LIBPATH/$lib | cut -c10- > \
         ../$TAG/lib/symbols/$(dirname $lib)/$(basename $lib .so).sym
 done
