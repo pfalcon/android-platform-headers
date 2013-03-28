@@ -57,6 +57,6 @@ a particular tag:
 TODO
 ----
 1. Add platform "import" libraries to link with (devoid of code, only with
-exported symbols).
+exported symbols) - in progress.
 
 2. Similar "implib" jars to link Java code against.
