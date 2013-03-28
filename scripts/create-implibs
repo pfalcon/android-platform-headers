@@ -14,7 +14,12 @@ cd $BASE/symbols
 for f in $(find . -name "*.sym"); do
     echo $f
     dir=$(dirname $f)
-    awk ' { print "void " $0 "(){}"}' $f >$f.c
+    # DF means Dynamic Function
+    # DO means Dynamic Object
+    awk '
+        $2=="DF" { print "void " $5 "(){}" }
+        $2=="DO" { print "char " $5 ";" }
+    ' $f >$f.c
     mkdir -p ../$dir
     $GCC -w --shared -nostdlib -fomit-frame-pointer -s $f.c -o ../$dir/$(basename $f .sym).so
     rm $f.c

@@ -11,7 +11,9 @@ LIBPATH=$TAG/out/target/product/generic/system/lib
 for lib in $(cd $LIBPATH; find . -name "*.so"); do
     echo $lib
     mkdir -p ../$TAG/lib/symbols/$(dirname $lib)
-    # DF means Dynamic Function
-    objdump --dynamic-syms $LIBPATH/$lib | awk '$3 == "DF" {print $6}' | sort > \
+    # Strip symbol value/address - assume that it's unstable across compilers,
+    # so will lead to spurious diffs when reproducing. There's also "size" field
+    # left, but assume that's more stable and leave it in.
+    objdump --dynamic-syms $LIBPATH/$lib | grep "^0" | cut -c10- | LC_COLLATE=C sort -t$'\t' -k2.10 > \
         ../$TAG/lib/symbols/$(dirname $lib)/$(basename $lib .so).sym
 done
