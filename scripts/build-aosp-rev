@@ -20,10 +20,10 @@ if [ ! -d "$TAG" ]; then
     fi
 fi
 
-export USE_CCACHE=1
-export CCACHE_DIR=$PWD/ccache
-mkdir -p $CCACHE_DIR
-ccache -M 10G
+#export USE_CCACHE=1
+#export CCACHE_DIR=$PWD/ccache
+#mkdir -p $CCACHE_DIR
+#ccache -M 10G
 
 cd $TAG
 
@@ -33,4 +33,4 @@ lunch generic-eng
 # Older versions of Android required old gcc
 # We add ccache for host compilation too, because Android build
 # system by default ccache's only target compilation.
-make systemtarball $SHOWCOMMANDS HOST_CC="ccache gcc-4.4" HOST_CXX="ccache g++-4.4" HOST_CPP=cpp-4.4
+make systemtarball $SHOWCOMMANDS HOST_CC=gcc-4.4 HOST_CXX=g++-4.4 HOST_CPP=cpp-4.4
