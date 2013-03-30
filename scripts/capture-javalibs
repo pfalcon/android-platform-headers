@@ -11,7 +11,10 @@ LIBPATH=$TAG/out/target/common/obj/JAVA_LIBRARIES
 for libdir in $(cd $LIBPATH; ls -1); do
     lib=${libdir%_intermediates}
     echo $lib
-    ls -l $LIBPATH/$libdir/classes.jar
     mkdir -p ../$TAG/javalib
-    cp $LIBPATH/$libdir/classes.jar ../$TAG/javalib/$lib.jar
+    if [ -f $LIBPATH/$libdir/classes.jar ]; then
+        cp $LIBPATH/$libdir/classes.jar ../$TAG/javalib/$lib.jar
+    else
+        cp $LIBPATH/$libdir/javalib.jar ../$TAG/javalib/$lib.jar
+    fi
 done
