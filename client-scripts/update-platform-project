@@ -8,87 +8,96 @@ APILEV_TO_RELEASE = {
     "android-4": "android-1.6_r1",
 }
 
+class PlatformProjectUpdater:
 
-def load_props(fname):
-    d = {}
-    for l in open(fname):
-        l = l.strip()
-        if not l or l[0] == "#":
-            continue
-        k, v = [a.strip() for a in l.split("=", 1)]
-        d[k] = v
-    return d
+    def __init__(self):
+        self.local_props = self.load_props("local.properties")
+        self.project_props = self.load_props("project.properties")
+        self.platform_path = "../../../android-platform-headers"
 
-def load_mk(fname):
-    d = {}
-    for l in open(fname):
-        l = l.strip()
-        if not l or l[0] == "#":
-            continue
-        try:
-            k, v = [a.strip() for a in l.split(":=", 1)]
+    @staticmethod
+    def load_props(fname):
+        d = {}
+        for l in open(fname):
+            l = l.strip()
+            if not l or l[0] == "#":
+                continue
+            k, v = [a.strip() for a in l.split("=", 1)]
             d[k] = v
-        except:
-            pass
-    return d
+        return d
+
+    @staticmethod
+    def load_mk(fname):
+        d = {}
+        for l in open(fname):
+            l = l.strip()
+            if not l or l[0] == "#":
+                continue
+            try:
+                k, v = [a.strip() for a in l.split(":=", 1)]
+                d[k] = v
+            except:
+                pass
+        return d
+
+    def symlink_lib(self, lib, core=False):
+        if core:
+            p = "corelibs"
+        else:
+            p = "libs"
+        if not os.path.isdir(p):
+            os.mkdir(p)
+        p = p + "/" + lib + ".jar"
+        if os.path.exists(p):
+            os.remove(p)
+        ver = APILEV_TO_RELEASE[self.project_props["target"]]
+        src = "%s/%s/javalib/%s.jar" % (self.platform_path, ver, lib)
+        os.symlink(src, p)
+        print "Symlinked " + p
 
 
-def symlink_lib(lib, core=False):
-    if core:
-        p = "corelibs"
-    else:
-        p = "libs"
-    if not os.path.isdir(p):
-        os.mkdir(p)
-    p = p + "/" + lib + ".jar"
-    if os.path.exists(p):
-        os.remove(p)
-    os.symlink("../../../android-platform-headers/android-1.6_r1/javalib/" + lib + ".jar", p)
-    print "Symlinked " + p
+    @staticmethod
+    def get_sdk_build_xml():
+        sdk_build_xml = None
+        tree = lxml.etree.parse("build.xml")
+        for t in tree.xpath("import"):
+            if "${sdk.dir}" in t.get("file"):
+                return t.get("file")
 
+    def process(self):
+        sdk_build_xml = self.get_sdk_build_xml()
+        sdk_build_xml = sdk_build_xml.replace("${sdk.dir}", self.local_props["sdk.dir"])
+        tree = lxml.etree.parse(sdk_build_xml)
 
-def get_sdk_build_xml():
-    sdk_build_xml = None
-    tree = lxml.etree.parse("build.xml")
-    for t in tree.xpath("import"):
-        if "${sdk.dir}" in t.get("file"):
-            return t.get("file")
+        root = lxml.etree.Element("project")
+        root.append(lxml.etree.fromstring("""
+        <path id="framework.complete">
+            <pathelement path="corelibs/core.jar" />
+            <pathelement path="corelibs/framework.jar" />
+        </path>
+        """))
+
+        target = tree.xpath("target[@name='-compile']")[0]
+        javac = target.xpath("//javac")[0]
+        javac.set("bootclasspathref", "framework.complete")
+
+        root.append(target)
+        with open("custom_rules.xml", "w") as f:
+            f.write(lxml.etree.tostring(root, pretty_print=True))
+        print "Added custom_rules.xml"
+
+        self.symlink_lib("core", True)
+        self.symlink_lib("ext", True)
+        self.symlink_lib("framework", True)
+
+        mk = self.load_mk("Android.mk")
+        for lib in mk["LOCAL_STATIC_JAVA_LIBRARIES"].split():
+            self.symlink_lib(lib)
+
 
 def main():
-    local_props = load_props("local.properties")
-    project_props = load_props("project.properties")
-
-    sdk_build_xml = get_sdk_build_xml()
-    sdk_build_xml = sdk_build_xml.replace("${sdk.dir}", local_props["sdk.dir"])
-#    print sdk_build_xml
-
-    tree = lxml.etree.parse(sdk_build_xml)
-#    print lxml.etree.tostring(tree.xpath("target[@name='-compile']")[0])
-
-    root = lxml.etree.Element("project")
-    root.append(lxml.etree.fromstring("""
-    <path id="framework.complete">
-        <pathelement path="corelibs/core.jar" />
-        <pathelement path="corelibs/framework.jar" />
-    </path>
-    """))
-
-    target = tree.xpath("target[@name='-compile']")[0]
-    javac = target.xpath("//javac")[0]
-    javac.set("bootclasspathref", "framework.complete")
-
-    root.append(target)
-    with open("custom_rules.xml", "w") as f:
-        f.write(lxml.etree.tostring(root, pretty_print=True))
-    print "Added custom_rules.xml"
-
-    symlink_lib("core", True)
-    symlink_lib("ext", True)
-    symlink_lib("framework", True)
-
-    mk = load_mk("Android.mk")
-    for lib in mk["LOCAL_STATIC_JAVA_LIBRARIES"].split():
-        symlink_lib(lib)
+    p = PlatformProjectUpdater()
+    p.process()
 
 
 if __name__ == "__main__":
