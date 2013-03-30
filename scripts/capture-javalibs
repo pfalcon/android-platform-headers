@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "$1" == "" ]; then
+    echo "Usage: $0 <tag>"
+    exit 1
+fi
+
+TAG=$1
+
+LIBPATH=$TAG/out/target/common/obj/JAVA_LIBRARIES
+for libdir in $(cd $LIBPATH; ls -1); do
+    lib=${libdir%_intermediates}
+    echo $lib
+    ls -l $LIBPATH/$libdir/classes.jar
+    mkdir -p ../$TAG/javalib
+    cp $LIBPATH/$libdir/classes.jar ../$TAG/javalib/$lib.jar
+done
