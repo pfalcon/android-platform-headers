@@ -59,4 +59,4 @@ TODO
 1. Add platform "import" libraries to link with (devoid of code, only with
 exported symbols) - in progress.
 
-2. Similar "implib" jars to link Java code against.
+2. Similar "implib" jars to link Java code against - in progress.
