@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 import sys
 import os
+import re
 import lxml.etree
 
-
-APILEV_TO_RELEASE = {
-    "android-4": "android-1.6_r1",
-}
 
 class PlatformProjectUpdater:
 
     def __init__(self):
         self.local_props = self.load_props("local.properties")
         self.project_props = self.load_props("project.properties")
-        self.platform_path = "../../../android-platform-headers"
+        self.platform_path = "../../android-platform-headers"
 
     @staticmethod
     def load_props(fname):
@@ -34,7 +31,7 @@ class PlatformProjectUpdater:
             if not l or l[0] == "#":
                 continue
             try:
-                k, v = [a.strip() for a in l.split(":=", 1)]
+                k, v = [a.strip() for a in re.split("[:+]=", l, 1)]
                 d[k] = v
             except:
                 pass
@@ -48,10 +45,9 @@ class PlatformProjectUpdater:
         if not os.path.isdir(p):
             os.mkdir(p)
         p = p + "/" + lib + ".jar"
-        if os.path.exists(p):
+        if os.path.islink(p):
             os.remove(p)
-        ver = APILEV_TO_RELEASE[self.project_props["target"]]
-        src = "%s/%s/javalib/%s.jar" % (self.platform_path, ver, lib)
+        src = "%s/%s/javalib/%s.jar" % (self.platform_path, self.project_props["target"], lib)
         os.symlink(src, p)
         print "Symlinked " + p
 
@@ -91,7 +87,7 @@ class PlatformProjectUpdater:
         self.symlink_lib("framework", True)
 
         mk = self.load_mk("Android.mk")
-        for lib in mk["LOCAL_STATIC_JAVA_LIBRARIES"].split():
+        for lib in mk.get("LOCAL_STATIC_JAVA_LIBRARIES", "").split():
             self.symlink_lib(lib)
 
 
