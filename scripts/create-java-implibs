@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+if [ "$1" == "" ]; then
+    echo "Usage: $0 <tag>"
+    exit 1
+fi
+
+LINKLIBS="
+    core
+    ext
+    framework
+"
+
+TAG=$1
+
+LIBPATH=../$TAG/javalib
+
+for lib in $LINKLIBS; do
+    echo "Create link lib from $lib.jar"
+    ./linklibize-jar $PWD/$LIBPATH/$lib.jar
+    mv ${lib}_linklib.jar $LIBPATH/$lib.jar
+done

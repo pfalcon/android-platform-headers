@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+PROGUARD_LINKLIB=../../proguard-linklib
+
+if [ ! -f $PROGUARD_LINKLIB/lib/proguard.jar ]; then
+    echo "proguard-linklib jar not found"
+    exit 1
+fi
+
+rm -rf tmp
+mkdir tmp
+(cd tmp; jar -xf $1)
+
+# Remove anonymous classes
+find tmp -regextype posix-egrep -regex '.+\$[0-9].+' | xargs -n100 rm
+
+jar -cf in.jar -C tmp .
+java -jar $PROGUARD_LINKLIB/lib/proguard.jar @linklib.pro
+
+rm -rf tmp
+mkdir tmp
+(cd tmp; jar -xf ../out.jar)
+# Use 7zip to improve compression ratio, even for standard zip archives
+(cd tmp; 7z a -mx9 -mpass=20 -mfb=256 -r ../$(basename $1 .jar)_linklib.jar * >/dev/null)
+
+rm in.jar out.jar
