@@ -1,0 +1,24 @@
+Turn java version mismatch into warning.
+
+diff --git a/core/main.mk b/core/main.mk
+index aaf5a76..0961141 100644
+--- a/build/core/main.mk
++++ b/build/core/main.mk
+@@ -102,7 +102,7 @@ $(info $(space))
+ $(info Please follow the machine setup instructions at)
+ $(info $(space)$(space)$(space)$(space)http://source.android.com/download)
+ $(info ************************************************************)
+-$(error stop)
++#$(error stop)
+ endif
+ 
+ # Check for the correct version of javac
+@@ -118,7 +118,7 @@ $(info $(space))
+ $(info Please follow the machine setup instructions at)
+ $(info $(space)$(space)$(space)$(space)http://source.android.com/download)
+ $(info ************************************************************)
+-$(error stop)
++#$(error stop)
+ endif
+ 
+ endif # windows

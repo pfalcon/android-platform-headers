@@ -1,0 +1,39 @@
+diff --git a/emulator/qtools/dmtrace.cpp b/emulator/qtools/dmtrace.cpp
+index 6d9250a..d6cde4f 100644
+--- a/development/emulator/qtools/dmtrace.cpp
++++ b/development/emulator/qtools/dmtrace.cpp
+@@ -163,7 +163,7 @@ void DmTrace::parseAndAddFunction(int functionId, const char *name)
+     //   sig = "()I"
+ 
+     // Find the first parenthesis, the start of the signature.
+-    char *paren = strchr(name, '(');
++    char *paren = (char *)strchr(name, '(');
+ 
+     // If not found, then add the original name.
+     if (paren == NULL) {
+@@ -180,7 +180,7 @@ void DmTrace::parseAndAddFunction(int functionId, const char *name)
+     *paren = 0;
+ 
+     // Search for the last period, the start of the method name
+-    char *dot = strrchr(name, '.');
++    char *dot = (char *)strrchr(name, '.');
+ 
+     // If not found, then add the original name.
+     if (dot == NULL || dot == name) {
+diff --git a/emulator/qtools/trace_reader.cpp b/emulator/qtools/trace_reader.cpp
+index d2af64f..47b5d93 100644
+--- a/development/emulator/qtools/trace_reader.cpp
++++ b/development/emulator/qtools/trace_reader.cpp
+@@ -1009,10 +1009,10 @@ void TraceReaderBase::ParseDexList(const char *filename)
+ // be freed by the caller after it is no longer needed.
+ static char *ExtractDexPathFromMmap(const char *mmap_path)
+ {
+-    char *end = rindex(mmap_path, '@');
++    const char *end = rindex(mmap_path, '@');
+     if (end == NULL)
+         return NULL;
+-    char *start = rindex(mmap_path, '/');
++    const char *start = rindex(mmap_path, '/');
+     if (start == NULL)
+         return NULL;
+     int len = end - start;
