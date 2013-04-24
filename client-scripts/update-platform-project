@@ -69,6 +69,7 @@ class PlatformProjectUpdater:
         root.append(lxml.etree.fromstring("""
         <path id="framework.complete">
             <pathelement path="corelibs/core.jar" />
+            <pathelement path="corelibs/ext.jar" />
             <pathelement path="corelibs/framework.jar" />
         </path>
         """))
