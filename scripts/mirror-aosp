@@ -33,7 +33,7 @@ GIT_CLONE_OPTS=--mirror
 TOP=$PWD
 for p in $PROJECTS; do
     mkdir -p $TOP/$AOSP_MIRROR_DIR
-    cd $TOP/$MIRROR_DIR
+    cd $TOP/$AOSP_MIRROR_DIR
     echo $p
     if [ -d $p.git ]; then
         continue
