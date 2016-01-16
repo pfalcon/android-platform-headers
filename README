@@ -21,6 +21,8 @@ from following AOSP projects:
  * system/core
  * frameworks/base
  * frameworks/native
+ * hardware/libhardware
+ * hardware/libhardware_legacy
 
 
 NOTE: Project git repository may undergo rebases. Please rely on
